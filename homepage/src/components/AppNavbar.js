@@ -5,6 +5,7 @@ import {
   Nav
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import account from '../icons/account.svg';
 
 function NavigationBar() {
   return (
@@ -41,6 +42,11 @@ function NavigationBar() {
           <Nav.Link href="/discover">Discover</Nav.Link>
           <Nav.Link href="/contact">Contact</Nav.Link>
         </Nav>
+        <Navbar.Collapse className='icons' style={{justifyContent: 'end'}}>
+            <Nav style={{alignItems: 'center'}}>
+                <img src={account} alt='account'></img>
+            </Nav>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );
