@@ -5,6 +5,8 @@ import {
   Nav
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import login from "../Pages/Login";
+import { NavLink } from "react-router-dom";
 import account from '../icons/account.svg';
 
 function NavigationBar() {
@@ -44,7 +46,7 @@ function NavigationBar() {
         </Nav>
         <Navbar.Collapse className='icons' style={{justifyContent: 'end'}}>
             <Nav style={{alignItems: 'center'}}>
-                <img src={account} alt='account'></img>
+                <Nav.Link href='/login' className='login-btn'><a href='/login' className='logo'><img src={account} alt='account'/></a></Nav.Link>
             </Nav>
         </Navbar.Collapse>
       </Container>
