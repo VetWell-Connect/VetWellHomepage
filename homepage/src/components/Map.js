@@ -52,6 +52,8 @@ let directionsRenderer;
 let infowindow;
 let startingLocation;
 
+let initialStartingMode = "DRIVING";
+
 const MapComponent1 = () => {
     const [map, setMap] = useState(null);
 
@@ -236,6 +238,19 @@ const MapComponent1 = () => {
             '<p><b>Website:</b> <a href="' + place.website + '">' + place.website + '</a></p>' +
             '<p><b>Rating:</b> ' + place.rating + '</p>';
 
+                    // Add reviews if available
+        if (place.reviews && place.reviews.length > 0) {
+            detailsHTML += '<h2>Reviews:</h2>';
+            for (let i = 0; i < Math.min(place.reviews.length, 2); i++) {
+            const review = place.reviews[i];
+            detailsHTML += '<p><b>Author:</b> ' + review.author_name + '</p>' +
+                '<p><b>Rating:</b> ' + review.rating + '</p>' +
+                '<p><b>Review:</b> ' + review.text + '</p>';
+            }
+        } else {
+            detailsHTML += '<p>No reviews available</p>';
+        }
+
         // Concatenate all HTML elements
         const contentString =
             '<div id="content">' +
@@ -360,29 +375,35 @@ const MapComponent1 = () => {
                 window.google.maps.event.addListener(infowindow, 'closeclick', () => {
                     // Recalculate route and display it on the map
                     calcRoute(place.geometry.location);
+                    document.getElementById("mode").addEventListener("change", () => {
+                        calcRoute(place.geometry.location);
+                      });
                 });
             });
-
         }
     }
     const calcRoute = (destination) => {
-        let directionsRequest = {
-            origin: startingLocation.geometry.location,
-            destination: destination,
-            travelMode: "DRIVING",
+        const selectedMode = document.getElementById("mode").value;
 
-        }
-
-        directionsService.route(directionsRequest, function (result, status) {
-            if (status === "OK") {
-                directionsRenderer.setDirections(result);
-
-                // Adjust the map's zoom level to fit the route
-                map.fitBounds(result.routes[0].bounds);
-
+            let directionsRequest = {
+                origin: startingLocation.geometry.location,
+                destination: destination,
+                travelMode: window.google.maps.TravelMode[selectedMode],
+    
             }
-        })
+    
+            directionsService.route(directionsRequest, function (result, status) {
+                if (status === "OK") {
+                    directionsRenderer.setDirections(result);
+                    var travelMode = document.getElementById("mode").value;
+    
+                    // Adjust the map's zoom level to fit the route
+                    map.fitBounds(result.routes[0].bounds);
+    
+                }
+            })
     }
+
     const createLegend = () => {
         const legend = document.createElement("div");
         legend.id = "legend";
@@ -420,6 +441,15 @@ const MapComponent1 = () => {
             >
                 <input id="autocomplete" placeholder="Enter a Location" type="text" />
             </Autocomplete>
+            <div id="floating-panel">
+      <b>Mode of Travel: </b>
+      <select id="mode">
+        <option value="DRIVING">Driving</option>
+        <option value="WALKING">Walking</option>
+        <option value="BICYCLING">Bicycling</option>
+        <option value="TRANSIT">Transit</option>
+      </select>
+    </div>
             {isLoaded && (
                 <GoogleMap
                     onLoad={handleMapLoad}
