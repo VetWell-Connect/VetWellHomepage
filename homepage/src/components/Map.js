@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, Autocomplete, useLoadScript} from "@react-google-maps/api";
+import { GoogleMap, Autocomplete, useLoadScript } from "@react-google-maps/api";
 
 const iconBase = "http://maps.google.com/mapfiles/ms/icons/";
 const icons = {
@@ -222,45 +222,52 @@ const MapComponent1 = () => {
     const createMarker = (place, placeType) => {
         if (!place.geometry || !place.geometry.location) return;
 
-        let photoHTML = '';
-        if (place.photos && place.photos.length > 0) {
-            const photo = place.photos[0]; // Assuming you want to display the first photo
-            photoHTML = '<img src="' + photo.getUrl({ maxWidth: 200 }) + '">';
-        } else {
-            photoHTML = '<p>No photo available</p>';
-        }
-        // Generate HTML for the name
-        const nameHTML = '<h1>' + place.name + '</h1>';
+       let photoHTML = '';
+    if (place.photos && place.photos.length > 0) {
+        const photo = place.photos[0]; // Assuming you want to display the first photo
+        photoHTML = '<img src="' + photo.getUrl({ maxWidth: 200 }) + '" style="width: 100%; height: auto;">';
+    } else {
+        photoHTML = '<p>No photo available</p>';
+    }
 
-        // Generate HTML for the address, phone number, website, rating, and reviews
-        let detailsHTML = '<p><b>Address:</b> ' + place.formatted_address + '</p>' +
-            '<p><b>Phone:</b> ' + place.formatted_phone_number + '</p>' +
-            '<p><b>Website:</b> <a href="' + place.website + '">' + place.website + '</a></p>' +
-            '<p><b>Rating:</b> ' + place.rating + '</p>';
+    // Generate HTML for the name
+    const nameHTML = '<h1>' + place.name + '</h1>';
 
-                    // Add reviews if available
-        if (place.reviews && place.reviews.length > 0) {
-            detailsHTML += '<h2>Reviews:</h2>';
-            for (let i = 0; i < Math.min(place.reviews.length, 2); i++) {
+    // Generate HTML for the address, phone number, website, rating, and reviews
+    let detailsHTML = '<p><b>Address:</b> ' + place.formatted_address + '</p>' +
+        '<p><b>Phone:</b> ' + place.formatted_phone_number + '</p>' +
+        '<p><b>Website:</b> <a href="' + place.website + '">' + place.website + '</a></p>' +
+        '<p><b>Rating:</b> ' + place.rating + '</p>';
+
+    // Add reviews if available
+    if (place.reviews && place.reviews.length > 0) {
+        detailsHTML += '<h2>Reviews:</h2>';
+        for (let i = 0; i < Math.min(place.reviews.length, 2); i++) {
             const review = place.reviews[i];
             detailsHTML += '<p><b>Author:</b> ' + review.author_name + '</p>' +
                 '<p><b>Rating:</b> ' + review.rating + '</p>' +
                 '<p><b>Review:</b> ' + review.text + '</p>';
-            }
-        } else {
-            detailsHTML += '<p>No reviews available</p>';
         }
+    } else {
+        detailsHTML += '<p>No reviews available</p>';
+    }
 
-        // Concatenate all HTML elements
-        const contentString =
-            '<div id="content">' +
-            '<div id="siteNotice"></div>' +
-            '<div id="bodyContent">' +
-            photoHTML +
-            nameHTML +
-            detailsHTML +
-            '</div>' +
-            '</div>';
+    // Concatenate all HTML elements
+    const contentString =
+        '<div id="content">' +
+        '<div id="photo" style="float: left; padding: 10px">' +
+        photoHTML +
+        '</div>' +
+         '<div id="details" style="float: left"; padding: 10px>' +
+        nameHTML +
+        detailsHTML +
+        
+        '</div>' +
+        
+        '<div id="reviews" style="clear: both; width: 100%; height: 50%; overflow: scroll">' +
+        '</div>' +
+        '</div>';
+            
         if (placeType === YOGA) {
 
             const marker = new window.google.maps.Marker({
@@ -275,10 +282,22 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
+                    
                 });
                 infowindow.open(map);
-
+                /*
+                // Add custom CSS styling after the InfoWindow is opened
+                window.google.maps.event.addListenerOnce(infowindow, 'domready', () => {
+                    const infoWindowContent = document.querySelector('.gm-style-iw');
+                    infoWindowContent.style.padding = '10px';
+                    infoWindowContent.style.borderRadius = '10px';
+                    infoWindowContent.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+                    infoWindowContent.style.background = 'red';
+                    //infoWindowContent.style.borderColor = 'red';
+                    // You can add more custom styles as needed
+                });
+                */
                 // Add listener for closeclick event
                 window.google.maps.event.addListener(infowindow, 'closeclick', () => {
                     // Recalculate route and display it on the map
@@ -377,7 +396,7 @@ const MapComponent1 = () => {
                     calcRoute(place.geometry.location);
                     document.getElementById("mode").addEventListener("change", () => {
                         calcRoute(place.geometry.location);
-                      });
+                    });
                 });
             });
         }
@@ -385,23 +404,23 @@ const MapComponent1 = () => {
     const calcRoute = (destination) => {
         const selectedMode = document.getElementById("mode").value;
 
-            let directionsRequest = {
-                origin: startingLocation.geometry.location,
-                destination: destination,
-                travelMode: window.google.maps.TravelMode[selectedMode],
-    
+        let directionsRequest = {
+            origin: startingLocation.geometry.location,
+            destination: destination,
+            travelMode: window.google.maps.TravelMode[selectedMode],
+
+        }
+
+        directionsService.route(directionsRequest, function (result, status) {
+            if (status === "OK") {
+                directionsRenderer.setDirections(result);
+                var travelMode = document.getElementById("mode").value;
+
+                // Adjust the map's zoom level to fit the route
+                map.fitBounds(result.routes[0].bounds);
+
             }
-    
-            directionsService.route(directionsRequest, function (result, status) {
-                if (status === "OK") {
-                    directionsRenderer.setDirections(result);
-                    var travelMode = document.getElementById("mode").value;
-    
-                    // Adjust the map's zoom level to fit the route
-                    map.fitBounds(result.routes[0].bounds);
-    
-                }
-            })
+        })
     }
 
     const createLegend = () => {
@@ -442,14 +461,14 @@ const MapComponent1 = () => {
                 <input id="autocomplete" placeholder="Enter a Location" type="text" />
             </Autocomplete>
             <div id="floating-panel">
-      <b>Mode of Travel: </b>
-      <select id="mode">
-        <option value="DRIVING">Driving</option>
-        <option value="WALKING">Walking</option>
-        <option value="BICYCLING">Bicycling</option>
-        <option value="TRANSIT">Transit</option>
-      </select>
-    </div>
+                <b>Mode of Travel: </b>
+                <select id="mode">
+                    <option value="DRIVING">Driving</option>
+                    <option value="WALKING">Walking</option>
+                    <option value="BICYCLING">Bicycling</option>
+                    <option value="TRANSIT">Transit</option>
+                </select>
+            </div>
             {isLoaded && (
                 <GoogleMap
                     onLoad={handleMapLoad}

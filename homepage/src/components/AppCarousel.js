@@ -24,7 +24,7 @@ function InfoCarousel() {
         />
         <Carousel.Caption>
           <h5>Second slide label</h5>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>TEsting text</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
