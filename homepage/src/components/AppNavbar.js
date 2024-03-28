@@ -16,7 +16,7 @@ function NavigationBar() {
       variant="dark"
       data-bs-theme="dark"
       expand="lg"
-      fixed="top"
+      static="top"
     >
       <Container>
         <Navbar.Brand href="/home">
