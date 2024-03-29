@@ -1,8 +1,13 @@
 import React from 'react-bootstrap';
+import MapComponent1 from '../components/Map';
+
 
 function Discover() {
     return (
-        <div>Discover</div>
+        <div>
+            <MapComponent1/>
+        </div>
+
     );
 }
 
