@@ -162,3 +162,16 @@ input[type=button].button-secondary:hover {
 #legend img {
   vertical-align: middle;
 }
+
+.input-container {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+#autocomplete {
+  width: 650px; /* Adjust width as needed */
+}
+
+#floating-panel {
+  margin-left: 20px; /* Adjust margin as needed */
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, Autocomplete, useLoadScript} from "@react-google-maps/api";
+import { GoogleMap, Autocomplete, useLoadScript } from "@react-google-maps/api";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const iconBase = "http://maps.google.com/mapfiles/ms/icons/";
 const icons = {
@@ -275,14 +276,28 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
+                    
                 });
                 infowindow.open(map);
+                calcRoute(place.geometry.location);
 
+                /*
+                // Add custom CSS styling after the InfoWindow is opened
+                window.google.maps.event.addListenerOnce(infowindow, 'domready', () => {
+                    const infoWindowContent = document.querySelector('.gm-style-iw');
+                    infoWindowContent.style.padding = '10px';
+                    infoWindowContent.style.borderRadius = '10px';
+                    infoWindowContent.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+                    infoWindowContent.style.background = 'red';
+                    //infoWindowContent.style.borderColor = 'red';
+                    // You can add more custom styles as needed
+                });
+                */
                 // Add listener for closeclick event
                 window.google.maps.event.addListener(infowindow, 'closeclick', () => {
                     // Recalculate route and display it on the map
-                    calcRoute(place.geometry.location);
+                    // calcRoute(place.geometry.location);
                 });
 
             });
@@ -298,7 +313,7 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
                 });
                 infowindow.open(map);
 
@@ -321,7 +336,7 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
                 });
                 infowindow.open(map);
 
@@ -344,7 +359,7 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
                 });
                 infowindow.open(map);
 
@@ -367,7 +382,7 @@ const MapComponent1 = () => {
                 infowindow.setContent(contentString);
                 infowindow.setPosition(place.geometry.location);
                 infowindow.setOptions({
-                    maxWidth: 250,
+                    maxWidth: 500,
                 });
                 infowindow.open(map);
 
@@ -377,7 +392,7 @@ const MapComponent1 = () => {
                     calcRoute(place.geometry.location);
                     document.getElementById("mode").addEventListener("change", () => {
                         calcRoute(place.geometry.location);
-                      });
+                    });
                 });
             });
         }
@@ -385,23 +400,23 @@ const MapComponent1 = () => {
     const calcRoute = (destination) => {
         const selectedMode = document.getElementById("mode").value;
 
-            let directionsRequest = {
-                origin: startingLocation.geometry.location,
-                destination: destination,
-                travelMode: window.google.maps.TravelMode[selectedMode],
-    
+        let directionsRequest = {
+            origin: startingLocation.geometry.location,
+            destination: destination,
+            travelMode: window.google.maps.TravelMode[selectedMode],
+
+        }
+
+        directionsService.route(directionsRequest, function (result, status) {
+            if (status === "OK") {
+                directionsRenderer.setDirections(result);
+                var travelMode = document.getElementById("mode").value;
+
+                // Adjust the map's zoom level to fit the route
+                map.fitBounds(result.routes[0].bounds);
+
             }
-    
-            directionsService.route(directionsRequest, function (result, status) {
-                if (status === "OK") {
-                    directionsRenderer.setDirections(result);
-                    var travelMode = document.getElementById("mode").value;
-    
-                    // Adjust the map's zoom level to fit the route
-                    map.fitBounds(result.routes[0].bounds);
-    
-                }
-            })
+        })
     }
 
     const createLegend = () => {
@@ -435,21 +450,25 @@ const MapComponent1 = () => {
 
     return (
         <div>
+            <div class = "input-container">
             <Autocomplete
                 onLoad={handleAutocompleteLoad}
                 onPlaceChanged={onPlaceChanged}
             >
                 <input id="autocomplete" placeholder="Enter a Location" type="text" />
             </Autocomplete>
+
             <div id="floating-panel">
-      <b>Mode of Travel: </b>
-      <select id="mode">
-        <option value="DRIVING">Driving</option>
-        <option value="WALKING">Walking</option>
-        <option value="BICYCLING">Bicycling</option>
-        <option value="TRANSIT">Transit</option>
-      </select>
-    </div>
+                <b>Mode of Travel: </b>
+                <select id="mode">
+                    <option value="DRIVING">Driving</option>
+                    <option value="WALKING">Walking</option>
+                    <option value="BICYCLING">Bicycling</option>
+                    <option value="TRANSIT">Transit</option>
+                </select>
+            </div>
+            
+            </div>
             {isLoaded && (
                 <GoogleMap
                     onLoad={handleMapLoad}
