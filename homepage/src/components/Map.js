@@ -280,7 +280,7 @@ const MapComponent1 = () => {
                     
                 });
                 infowindow.open(map);
-                calcRoute(place.geometry.location);
+                //calcRoute(place.geometry.location);
 
                 /*
                 // Add custom CSS styling after the InfoWindow is opened
@@ -297,7 +297,7 @@ const MapComponent1 = () => {
                 // Add listener for closeclick event
                 window.google.maps.event.addListener(infowindow, 'closeclick', () => {
                     // Recalculate route and display it on the map
-                    // calcRoute(place.geometry.location);
+                    calcRoute(place.geometry.location);
                 });
 
             });
